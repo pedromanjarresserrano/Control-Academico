@@ -19,7 +19,6 @@ $(document).ready(function () {
             return (it.docente_id == docente_id.value);
         }, "No hay docentes registrados", localStorage, localStorageKeyName);
         if (!obj) {
-            // Clean data
             docente_nombres.value = '';
             docente_apellidos.value = '';
             docente_genero.value = '';
@@ -37,7 +36,6 @@ $(document).ready(function () {
             docente_apellidos = document.getElementById("docente_apellidos"),
             docente_genero = document.getElementById("docente_genero");
 
-        // Validate
         if (docente_id.value.length === 0 || docente_nombres.value.length === 0 || docente_apellidos.value.length ===
             0 || docente_genero.value.length === 0) return;
 
@@ -48,13 +46,11 @@ $(document).ready(function () {
             docente_genero: docente_genero.value
         };
 
-        // Clean data
         docente_id.value = '';
         docente_nombres.value = '';
         docente_apellidos.value = '';
         docente_genero.value = '';
 
-        // Append to my localStorage
         DAO.addObjectToLocalStorage(localStorage, localStorageKeyName, docente, "docente_id");
         loadFromLocalStorage();
     })
@@ -63,7 +59,6 @@ $(document).ready(function () {
 
     function loadFromLocalStorage() {
         var docentes = DAO.getAll(localStorage, localStorageKeyName);
-        // Draw TR from TBODY
         var gridBody = $('#grid_docentes tbody');
         gridBody.empty();
 

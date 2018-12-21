@@ -47,7 +47,6 @@ $(document).ready(function () {
             curso_observaciones = document.getElementById("curso_observaciones"),
             curso_docente = document.getElementById("curso_docente");
 
-        // Validate
         if (curso_id.value.length === 0 || curso_codigo.value.length === 0 || curso_nombre.value.length ===
             0 || curso_observaciones.value.length === 0) return;
 
@@ -60,14 +59,12 @@ $(document).ready(function () {
             curso_estudiantes: []
         };
 
-        // Clean data
         curso_id.value = '';
         curso_codigo.value = '';
         curso_nombre.value = '';
         curso_observaciones.value = '';
         curso_docente.value = '';
 
-        // Append to my localStorage
         DAO.addObjectToLocalStorage(localStorage, localStorageKeyName, curso, 'curso_id');
         loadFromLocalStorage();
     })
@@ -77,7 +74,6 @@ $(document).ready(function () {
     function loadFromLocalStorage() {
         var cursos = DAO.getAll(localStorage, localStorageKeyName);
 
-        // Draw TR from TBODY
         var gridBody = $('#grid_cursos tbody');
         gridBody.empty();
 
@@ -121,10 +117,6 @@ $(document).ready(function () {
                     var find = x.curso_estudiantes.find(function (it) {
                         return (it.estudiante_id == estudiante.value);
                       })
-                    console.log(x);
-                    console.log(x.curso_estudiantes);
-                    console.log(obj);
-                    console.log(estudiante.value);
                     if (find) {
                         alert("Estudiante ya esta asignado a este curso");
                     } else {

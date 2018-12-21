@@ -19,7 +19,6 @@ $(document).ready(function () {
             return (it.estudiante_id == estudiante_id.value);
         }, "No hay estudiantes registrados", localStorage, localStorageKeyName);
         if (!obj) {
-            // Clean data
             estudiante_nombres.value = '';
             estudiante_apellidos.value = '';
             estudiante_genero.value = '';
@@ -37,7 +36,6 @@ $(document).ready(function () {
             estudiante_apellidos = document.getElementById("estudiante_apellidos"),
             estudiante_genero = document.getElementById("estudiante_genero");
 
-        // Validate
         if (estudiante_id.value.length === 0 || estudiante_nombres.value.length === 0 || estudiante_apellidos.value.length ===
             0 || estudiante_genero.value.length === 0) return;
 
@@ -48,13 +46,11 @@ $(document).ready(function () {
             estudiante_genero: estudiante_genero.value
         };
 
-        // Clean data
         estudiante_id.value = '';
         estudiante_nombres.value = '';
         estudiante_apellidos.value = '';
         estudiante_genero.value = '';
 
-        // Append to my localStorage
         DAO.addObjectToLocalStorage(localStorage, localStorageKeyName, estudiante, "estudiante_id");
         loadFromLocalStorage();
     })
@@ -63,7 +59,6 @@ $(document).ready(function () {
 
     function loadFromLocalStorage() {
         var estudiantes = DAO.getAll(localStorage, localStorageKeyName);
-        // Draw TR from TBODY
         var gridBody = $('#grid_estudiantes tbody');
         gridBody.empty();
 

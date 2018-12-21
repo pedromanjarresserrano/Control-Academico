@@ -52,7 +52,7 @@
     isLogged: function (localStorage) {
       var list = [],
         list = this.getAll(localStorage, "user_data"),
-        bools = list.lentgth == 0;
+        bools = list.length == 0;
       if (!list || bools) {
         $(location).attr('href', '/login.html ');
       }
