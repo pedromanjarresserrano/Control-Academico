@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+
+<head>
+    <title>CRUD Estudiantes</title>
+    <meta charset="utf-8" />
+    </link->
+    <script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="../js/estudiante.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <h1 class="jumbotron">CRUD Estudiantes</h1>
+
+                <table id="grid_estudiantes" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Identificiación</th>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>Género</th>
+                            <th style="width:80px;">
+
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <input id="estudiante_id" type="text" class="form-control" />
+                            </th>
+                            <th>
+                                <input id="estudiante_nombres" type="text" class="form-control" />
+                            </th>
+                            <th>
+                                <input id="estudiante_apellidos" type="text" class="form-control" />
+                            </th>
+                            <th>
+                                <select id="estudiante_genero" name="Genero" class="form-control">
+                                    <option value="Masculino">M</option>
+                                    <option value="Femenino">F</option>
+                                </select>
+                            </th>
+                            <th>
+                                <button id="btn-add-estudiante" class="btn btn-default">Guardar</button>
+                            </th>
+                            <th>
+                                <button id="btn-buscar-estudiante" class="btn btn-default">Buscar</button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
