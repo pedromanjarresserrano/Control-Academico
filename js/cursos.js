@@ -6,7 +6,6 @@ $(document).ready(function () {
             alert("Digite codigo");
             return;
         }
-        console.log(locationstring);
         $(location).attr('href', locationstring.split("?")[0] + '?getcurso=' + curso_id.value);
 
     });
@@ -14,11 +13,8 @@ $(document).ready(function () {
     $('.btn-ver-estudiantes-curso').each(function () {
         var curso_codigo = $(this).val();
         $(this).on('click', function () {
-            $("#ajax_loader").show();
             $('#btn-add-curso-estudiante').off("click").click(function () {
-                $("#ajax_loader").show();
                 var estudiante = document.getElementById("curso_estudiante");
-                console.log(estudiante);
                 $.ajax({
                     type: 'GET',
                     url: '../php/estudiante.php?addestu',
@@ -28,12 +24,10 @@ $(document).ready(function () {
                         'id_cc': curso_codigo
                     },
                     success: function (datainner) {
-                        $("#ajax_loader").hide();
                         if (datainner.trim().length > 0) alert(datainner);
                         load(curso_codigo);
                     },
                     error: function (a, b, c) {
-                        console.log('something went wrong:', a, b, c);
                     }
                 });
             });
@@ -62,7 +56,6 @@ $(document).ready(function () {
                 }
             },
             error: function (a, b, c) {
-                console.log('something went wrong:', a, b, c);
             }
         });
     }
@@ -78,14 +71,11 @@ $(document).ready(function () {
             },
             success: function (data) {
                 data = JSON.parse(data);
-                console.log(data);
                 $("#estudiantesModal").modal('show');
                 loadEstudiante(data, curso_codigo);
-                $("#ajax_loader").hide();
 
             },
             error: function (a, b, c) {
-                console.log('something went wrong:', a, b, c);
             }
         });
     }

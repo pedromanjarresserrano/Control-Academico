@@ -19,8 +19,6 @@ if (isset($_POST['login'])) {
     if (empty($password)) {
         array_push($errors, "Password is required");
     }
-    echo "<script type='text/javascript'> console.log($username); console.log($password); console.log(SELECT * FROM usuario WHERE username = '$username' AND password = '$password'); </script>";
-
     $record = mysqli_query($db, "SELECT * FROM usuario WHERE username = '$username' AND password = '$password' ");
     $n = mysqli_fetch_assoc($record);
     $aux_username = $n['username'];

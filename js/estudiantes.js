@@ -6,8 +6,6 @@ $(document).ready(function () {
             alert("Digite identificacion");
             return;
         }
-        console.log(locationstring);
-
         $(location).attr('href', locationstring.split("?")[0] + '?getestu=' + estudiante_id.value);
 
     });

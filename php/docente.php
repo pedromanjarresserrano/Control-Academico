@@ -42,6 +42,7 @@ if (isset($_POST['updatedoc'])) {
 
 if (isset($_POST['deldoc'])) {
 	$id = intval($_POST['doc_id']);
+	mysqli_query($db, "DELETE FROM docente_curso WHERE id_docente=$id ");
 	mysqli_query($db, "DELETE FROM docente WHERE id=$id");
 	$_SESSION['message'] = "Docente " . $id . " eliminado!";
 	header('location:../index.php');

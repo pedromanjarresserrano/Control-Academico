@@ -42,14 +42,6 @@ if (isset($_POST['savecurso'])) {
 }
 
 
-
-if (isset($_POST['addestudiante'])) {
-	$curso_codigo = $_POST['curso_codigo'];
-	$curso_nombre = $_POST['curso_nombre'];
-	
-	header('location:../index.php');
-}
-
 if (isset($_POST['updatcurso'])) {
 	$curso_codigo = $_POST['curso_codigo'];
 	$curso_nombre = $_POST['curso_nombres'];
@@ -60,27 +52,29 @@ if (isset($_POST['updatcurso'])) {
 }
 
 if (isset($_POST['delcurso'])) {
-	$id = intval($_POST['curso_codigo']);
-	mysqli_query($db, "DELETE FROM curso WHERE codigo=$id");
+	$id_curso = intval($_POST['curso_codigo']);
+	mysqli_query($db, "DELETE FROM estudiante_curso WHERE id_curso=$id_curso ");
+	mysqli_query($db, "DELETE FROM docente_curso WHERE id_curso=$id_curso ");
+	mysqli_query($db, "DELETE FROM curso WHERE id=$id_curso");
 	$_SESSION['message'] = "curso " . $id . " eliminado!";
 	header('location:../index.php');
 
 }
 
 if (isset($_GET['getcurso'])) {
-    $id = intval($_GET['getcurso']);
-    $record = mysqli_query($db, "SELECT * FROM curso inner join docente_curso on curso.id = docente_curso.id_curso inner join docente on docente.id = docente_curso.id_docente where curso.codigo=$id");
-    if (count($record) == 1) {
-        $n = mysqli_fetch_assoc($record);
-        $curso_codigo = $n['codigo'];
-        $curso_nombre = $n['nombre'];
-        $curso_observaciones = $n['observaciones'];
-        $curso_docente = $n['id_docente'];
-    } else {
-        echo "<script type='text/javascript'>
+	$id = intval($_GET['getcurso']);
+	$record = mysqli_query($db, "SELECT * FROM curso inner join docente_curso on curso.id = docente_curso.id_curso inner join docente on docente.id = docente_curso.id_docente where curso.codigo=$id");
+	if (count($record) == 1) {
+		$n = mysqli_fetch_assoc($record);
+		$curso_codigo = $n['codigo'];
+		$curso_nombre = $n['nombre'];
+		$curso_observaciones = $n['observaciones'];
+		$curso_docente = $n['id_docente'];
+	} else {
+		echo "<script type='text/javascript'>
                 alert('Curso no encontrado');
             </script>";
-    }
+	}
 }
 
 $results_cursos = mysqli_query($db, "SELECT * FROM curso inner join docente_curso on curso.id = docente_curso.id_curso inner join docente on docente.id = docente_curso.id_docente");

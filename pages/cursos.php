@@ -3,6 +3,21 @@ include('./php/session.php');
 include('./php/mysql.php');
 global $db;
 include('./php/curso.php');
+if (isset($_GET['getestudiantes'])) {
+    $id = intval($_GET['getestudiantes']);
+    $record = mysqli_query($db, "SELECT * FROM curso inner join estudiante_curso on curso.id = estudiante_curso.id_curso inner join estudiante on estudiante.id = estudiante_curso.id_estudiante where curso.codigo=$id");
+    if (count($record) == 1) {
+        $n = mysqli_fetch_assoc($record);
+        $curso_codigo = $n['codigo'];
+        $curso_nombre = $n['nombre'];
+        $curso_observaciones = $n['observaciones'];
+        $curso_docente = $n['id_docente'];
+    } else {
+        echo "<script type='text/javascript'>
+                alert('Curso no encontrado');
+            </script>";
+    }
+}
 
 
 ?>
@@ -13,6 +28,7 @@ include('./php/curso.php');
     <title>CRUD Cursos</title>
     <meta charset="utf-8" />
     <script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../js/cursos.js"></script>
 
 </head>
@@ -74,9 +90,9 @@ include('./php/curso.php');
                                 <td><?php echo $row['observaciones']; ?></td>
                                 <td><?php echo $row['identificacion'] . " - " . $row['nombres'] . " " . $row['apellidos']; ?></td>
                                 <td>
-                                <form method="post" action="php/estudiante.php" >
-                                    <input name="estu_id" type="text" class="form-control" value="<?php echo $row['id']; ?>" hidden="true" />
-                                    <button type="submit" name="delestu" class="btn btn-danger" >Eliminar</button>
+                                <form method="post" action="php/curso.php" >
+                                    <input name="curso_codigo" type="text" class="form-control" value="<?php echo $row['id_curso']; ?>" hidden="true" />
+                                    <button type="submit" name="delcurso" class="btn btn-danger" >Eliminar</button>
                                 </form>
                                 </td>
                                 <td>

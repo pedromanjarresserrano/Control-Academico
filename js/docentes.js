@@ -6,7 +6,6 @@ $(document).ready(function () {
             alert("Digite identificacion");
             return;
         }
-        console.log(locationstring.split("?")[0]);
         $(location).attr('href', locationstring.split("?")[0] + '?getdoc=' + docente_id.value);
 
     });
