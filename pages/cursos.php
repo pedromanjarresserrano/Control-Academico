@@ -1,11 +1,18 @@
+<?php 
+include('./php/session.php');
+include('./php/mysql.php');
+global $db;
+include('./php/curso.php');
+
+
+?>
 <!DOCTYPE html>
 <html lang="es-ES">
 
 <head>
     <title>CRUD Cursos</title>
     <meta charset="utf-8" />
-    <script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="../js/cursos.js"></script>
 
 </head>
@@ -17,11 +24,12 @@
             <div class="col-xs-12">
 
                 <h1 class="jumbotron">CRUD Cursos</h1>
+                <?php $results_cursos = mysqli_query($db, "SELECT * FROM curso inner join docente_curso on curso.id = docente_curso.id_curso inner join docente on docente.id = docente_curso.id_docente"); ?>
+                <?php $results_docentes = mysqli_query($db, "SELECT * FROM docente"); ?>
 
                 <table id="grid_cursos" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Id Curso</th>
                             <th>Codigo</th>
                             <th>Nombre</th>
                             <th>Observaciones</th>
@@ -31,32 +39,52 @@
                             </th>
                         </tr>
                         <tr>
-                            <th>
-                                <input id="curso_id" type="text" class="form-control" />
+                        <form method="post" action="php/curso.php" >
+                             <th>
+                                <input id="curso_codigo" name="curso_codigo" type="text" class="form-control"  value="<?php echo $curso_codigo; ?>"/>
                             </th>
                             <th>
-                                <input id="curso_codigo" type="text" class="form-control" />
+                                <input id="curso_nombre" name="curso_nombre" type="text" class="form-control" value="<?php echo $curso_nombre; ?>"/>
                             </th>
                             <th>
-                                <input id="curso_nombre" type="text" class="form-control" />
-                            </th>
-                            <th>
-                                <input id="curso_observaciones" type="text" class="form-control" />
+                                <input id="curso_observaciones" name="curso_observaciones" type="text" class="form-control" value="<?php echo $curso_observaciones; ?>"/>
                             </th>
                             <th style="display:flex;">
-                                <select id="curso_docente" name="Docente" class="form-control">
+                                <select id="curso_docente" name="curso_docente" class="form-control">
+                                <?php while ($row = mysqli_fetch_assoc($results_docentes)) { ?>
+                                    <option <?= $curso_docente == $row['id'] ? ' selected="selected"' : ''; ?>  value="<?php echo $row['id']; ?>" ><?php echo $row['identificacion'] . " - " . $row['nombres'] . " " . $row['apellidos']; ?></option>                    
+                                <?php 
+                            } ?>
                                 </select>
-                                <button id="reload_docentes" class="btn btn-success"><i class="fas fa-lg fa-sync-alt"></i></button>
+                                <a  href="/index.php" class="btn btn-success"><i class="fas fa-lg fa-sync-alt"></i></button>
                             </th>
                             <th>
-                                <button id="btn-add-cursos" class="btn btn-default">Guardar</button>
+                                <button id="btn-add-curso" type="submit" name="savecurso" class="btn btn-default">Guardar</button>
                             </th>
-                            <th>
-                                <button id="btn-buscar-cursos" class="btn btn-default">Buscar</button>
+                            </form>
+                             <th>
+                                <button id="btn-search-curso" class="btn btn-default">Buscar</button>
                             </th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>   <?php while ($row = mysqli_fetch_assoc($results_cursos)) { ?>
+                            <tr>
+                                <td id="td-curso-codigo"><?php echo $row['codigo']; ?></td>
+                                <td><?php echo $row['nombre']; ?></td>
+                                <td><?php echo $row['observaciones']; ?></td>
+                                <td><?php echo $row['identificacion'] . " - " . $row['nombres'] . " " . $row['apellidos']; ?></td>
+                                <td>
+                                <form method="post" action="php/estudiante.php" >
+                                    <input name="estu_id" type="text" class="form-control" value="<?php echo $row['id']; ?>" hidden="true" />
+                                    <button type="submit" name="delestu" class="btn btn-danger" >Eliminar</button>
+                                </form>
+                                </td>
+                                <td>
+                                    <button value="<?php echo $row['id_curso']; ?>" class="btn btn-xs btn-primary btn-ver-estudiantes-curso">Ver Estudiantes</button>
+                                </td>
+                            </tr>
+                    <?php 
+                } ?></tbody>
                 </table>
             </div>
         </div>
@@ -82,7 +110,7 @@
                                     <th>Estudiante
                                     </th>
                                     <th>
-                                        <select id="curso_estudiante" name="Genero" class="form-control">
+                                        <select id="curso_estudiante" name="curso_estudiante" class="form-control">
                                         </select>
                                     </th>
                                     <th>

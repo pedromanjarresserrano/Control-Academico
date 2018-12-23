@@ -1,152 +1,99 @@
 $(document).ready(function () {
-    var locationstring = window.location.href.toString();
-    if (!(locationstring.endsWith("/")) && !(locationstring.endsWith("/index.html")))
-        $(location).attr('href', '/login.html ');
-
-    DAO.isLogged(localStorage);
-    var localStorageKeyName = 'curso_data';
-
-    loadDocentes();
-    document.querySelector("#reload_docentes").addEventListener('click', function () {
-        loadDocentes();
-    });
-    loadFromLocalStorage();
-    document.querySelector("#btn-buscar-cursos").addEventListener('click', function () {
-        var curso_id = document.getElementById("curso_id"),
-            curso_codigo = document.getElementById("curso_codigo"),
-            curso_nombre = document.getElementById("curso_nombre"),
-            curso_observaciones = document.getElementById("curso_observaciones"),
-            curso_docente = document.getElementById("curso_docente");
+    $('#btn-search-curso').on('click', function () {
+        var locationstring = window.location.href.toString();
+        var curso_id = document.getElementById("curso_codigo");
         if (curso_id.value.length === 0) {
-            alert("Digite id");
+            alert("Digite codigo");
             return;
         }
-        var obj = DAO.getObject(function (it) {
-            return (it.curso_id == curso_id.value);
-        }, "No hay cursos registrados", localStorage, localStorageKeyName);
-        if (!obj) {
-            // Clean data
-            curso_codigo.value = '';
-            curso_nombre.value = '';
-            curso_observaciones.value = '';
-            curso_docente.value = '';
-            alert("Curso no encontrado");
-        } else {
-            curso_codigo.value = obj.curso_codigo;
-            curso_nombre.value = obj.curso_nombre;
-            curso_observaciones.value = obj.curso_observaciones;
-            curso_observaciones.value = obj.curso_observaciones;
-            curso_docente.value = obj.curso_docente;
-        }
+        console.log(locationstring);
+        $(location).attr('href', locationstring.split("?")[0] + '?getcurso=' + curso_id.value);
 
-    })
-    document.querySelector("#btn-add-cursos").addEventListener('click', function () {
-        var curso_id = document.getElementById("curso_id"),
-            curso_codigo = document.getElementById("curso_codigo"),
-            curso_nombre = document.getElementById("curso_nombre"),
-            curso_observaciones = document.getElementById("curso_observaciones"),
-            curso_docente = document.getElementById("curso_docente");
+    });
 
-        if (curso_id.value.length === 0 || curso_codigo.value.length === 0 || curso_nombre.value.length ===
-            0 || curso_observaciones.value.length === 0) return;
-
-        var curso = {
-            curso_id: curso_id.value,
-            curso_codigo: curso_codigo.value,
-            curso_nombre: curso_nombre.value,
-            curso_observaciones: curso_observaciones.value,
-            curso_docente: curso_docente.value,
-            curso_estudiantes: []
-        };
-
-        curso_id.value = '';
-        curso_codigo.value = '';
-        curso_nombre.value = '';
-        curso_observaciones.value = '';
-        curso_docente.value = '';
-
-        DAO.addObjectToLocalStorage(localStorage, localStorageKeyName, curso, 'curso_id');
-        loadFromLocalStorage();
-    })
-
-
-
-    function loadFromLocalStorage() {
-        var cursos = DAO.getAll(localStorage, localStorageKeyName);
-
-        var gridBody = $('#grid_cursos tbody');
-        gridBody.empty();
-
-        cursos.forEach(function (x, i) {
-            var tr = document.createElement("tr"),
-                tdcurso_id = document.createElement("td"),
-                tdcurso_codigo = document.createElement("td"),
-                tdcurso_nombre = document.createElement("td"),
-                tdcurso_docente = document.createElement("td"),
-                tdcurso_observaciones = document.createElement("td"),
-                tdRemove = document.createElement("td"),
-                btnRemove = document.createElement("button");
-            tdEstudiantes = document.createElement("td"),
-                btnEstudiantes = document.createElement("button");
-
-            tdcurso_id.innerHTML = x.curso_id;
-            tdcurso_codigo.innerHTML = x.curso_codigo;
-            tdcurso_nombre.innerHTML = x.curso_nombre;
-            tdcurso_observaciones.innerHTML = x.curso_observaciones;
-            var docente = DAO.getObject(function (it) {
-                return (it.docente_id == x.curso_docente);
-            }, "No hay docentes registrados", localStorage, 'docente_data');
-            tdcurso_docente.innerHTML = docente.docente_nombres + ' ' + docente.docente_apellidos;
-
-            btnRemove.textContent = 'Remove';
-            btnRemove.className = 'btn btn-xs btn-danger';
-            btnRemove.addEventListener('click', function () {
-                DAO.removeFromLocalStorage(i, localStorage, localStorageKeyName);
-                loadFromLocalStorage();
-            });
-            btnEstudiantes.textContent = "Ver Estudiantes";
-            btnEstudiantes.className = 'btn btn-xs btn-primary';
-            btnEstudiantes.addEventListener('click', function () {
-                $("#estudiantesModal").modal('show');
-                loadEstudiantes();
-                $('#btn-add-curso-estudiante').off("click").click(function () {
-                    var estudiante = document.getElementById("curso_estudiante");
-                    var obj = DAO.getObject(function (it) {
-                        return (it.estudiante_id == estudiante.value);
-                    }, "No hay estudiantes registrados", localStorage, 'estudiante_data');
-                    var find = x.curso_estudiantes.find(function (it) {
-                        return (it.estudiante_id == estudiante.value);
-                      })
-                    if (find) {
-                        alert("Estudiante ya esta asignado a este curso");
-                    } else {
-                        x.curso_estudiantes.push(obj);
-                        DAO.addObjectToLocalStorage(localStorage, localStorageKeyName, x, 'curso_id');
-                        loadEstudiantesCurso(x);
+    $('.btn-ver-estudiantes-curso').each(function () {
+        var curso_codigo = $(this).val();
+        $(this).on('click', function () {
+            $("#ajax_loader").show();
+            $('#btn-add-curso-estudiante').off("click").click(function () {
+                $("#ajax_loader").show();
+                var estudiante = document.getElementById("curso_estudiante");
+                console.log(estudiante);
+                $.ajax({
+                    type: 'GET',
+                    url: '../php/estudiante.php?addestu',
+                    datatype: "html",
+                    data: {
+                        'id_ee': estudiante.value,
+                        'id_cc': curso_codigo
+                    },
+                    success: function (datainner) {
+                        $("#ajax_loader").hide();
+                        if (datainner.trim().length > 0) alert(datainner);
+                        load(curso_codigo);
+                    },
+                    error: function (a, b, c) {
+                        console.log('something went wrong:', a, b, c);
                     }
                 });
-                loadEstudiantesCurso(x);
             });
-            tdRemove.appendChild(btnRemove);
-            tdEstudiantes.appendChild(btnEstudiantes);
+            load(curso_codigo);
 
-            tr.appendChild(tdcurso_id);
-            tr.appendChild(tdcurso_codigo);
-            tr.appendChild(tdcurso_nombre);
-            tr.appendChild(tdcurso_observaciones);
-            tr.appendChild(tdcurso_docente);
-            tr.appendChild(tdRemove);
-            tr.appendChild(tdEstudiantes);
+        });
+    });
 
-            gridBody.append(tr);
+    function loadEstudiantes() {
+        var estudiante = document.querySelector("#curso_estudiante");
+        $.ajax({
+            type: 'GET',
+            url: '../php/estudiante.php?getallestu',
+            datatype: "html",
+
+            success: function (data) {
+                estudiante.innerHTML = "";
+                data = JSON.parse(data);
+                if (data) {
+                    data.forEach(function (x, i) {
+                        var option = document.createElement("option");
+                        option.value = x.id;
+                        option.text = x.identificacion + " - " + x.nombres + ' ' + x.apellidos;
+                        estudiante.add(option);
+                    });
+                }
+            },
+            error: function (a, b, c) {
+                console.log('something went wrong:', a, b, c);
+            }
         });
     }
 
-    function loadEstudiantesCurso(curso_id) {
+    function load(curso_codigo) {
+        loadEstudiantes();
+        $.ajax({
+            type: 'GET',
+            url: '../php/get-estudiantes.php',
+            datatype: "html",
+            data: {
+                'id': curso_codigo
+            },
+            success: function (data) {
+                data = JSON.parse(data);
+                console.log(data);
+                $("#estudiantesModal").modal('show');
+                loadEstudiante(data, curso_codigo);
+                $("#ajax_loader").hide();
+
+            },
+            error: function (a, b, c) {
+                console.log('something went wrong:', a, b, c);
+            }
+        });
+    }
+
+    function loadEstudiante(data, curso_codigo) {
         var gridBody = $('#grid_estudiantes_curso tbody');
         gridBody.empty();
-
-        curso_id.curso_estudiantes.forEach(function (x, i) {
+        data.forEach(function (x, i) {
             var tr = document.createElement("tr"),
                 tdestudiante_id = document.createElement("td"),
                 tdestudiante_nombres = document.createElement("td"),
@@ -154,20 +101,28 @@ $(document).ready(function () {
                 tdestudiante_genero = document.createElement("td"),
                 tdRemove = document.createElement("td"),
                 btnRemove = document.createElement("button");
-            console.log(x.estudiante_id);
-            tdestudiante_id.innerHTML = x.estudiante_id;
-            tdestudiante_nombres.innerHTML = x.estudiante_nombres;
-            tdestudiante_apellidos.innerHTML = x.estudiante_apellidos;
-            tdestudiante_genero.innerHTML = x.estudiante_genero;
+
+            tdestudiante_id.innerHTML = x.identificacion;
+            tdestudiante_nombres.innerHTML = x.nombres;
+            tdestudiante_apellidos.innerHTML = x.apellidos;
+            tdestudiante_genero.innerHTML = x.genero;
 
             btnRemove.textContent = 'Remove';
             btnRemove.className = 'btn btn-xs btn-danger';
             btnRemove.addEventListener('click', function () {
-                curso_id.curso_estudiantes.splice(i, 1);
-                DAO.addObjectToLocalStorage(localStorage, localStorageKeyName, curso_id, 'curso_id');
-                loadEstudiantesCurso(curso_id)
+                $.ajax({
+                    type: 'GET',
+                    url: '../php/remove-estudiante.php',
+                    datatype: "html",
+                    data: {
+                        'id_e': x.id_estudiante,
+                        'id_c': curso_codigo
+                    },
+                    success: function (datainner) {
+                        load(curso_codigo);
+                    }
+                });
             });
-
             tdRemove.appendChild(btnRemove);
 
             tr.appendChild(tdestudiante_id);
@@ -178,33 +133,5 @@ $(document).ready(function () {
 
             gridBody.append(tr);
         });
-    }
-
-    function loadEstudiantes() {
-        var estudiante = document.querySelector("#curso_estudiante");
-        estudiante.innerHTML = "";
-        var estudiantes = DAO.getAll(localStorage, 'estudiante_data');
-        if (estudiantes) {
-            estudiantes.forEach(function (x, i) {
-                var option = document.createElement("option");
-                option.value = x.estudiante_id;
-                option.text = x.estudiante_id + " - " + x.estudiante_nombres + ' ' + x.estudiante_apellidos;
-                estudiante.add(option);
-            });
-        }
-    }
-
-    function loadDocentes() {
-        var docente = document.querySelector("#curso_docente");
-        docente.innerHTML = "";
-        var docentes = DAO.getAll(localStorage, 'docente_data');
-        if (docentes) {
-            docentes.forEach(function (x, i) {
-                var option = document.createElement("option");
-                option.value = x.docente_id;
-                option.text = x.docente_nombres + ' ' + x.docente_apellidos;
-                docente.add(option);
-            });
-        }
     }
 });

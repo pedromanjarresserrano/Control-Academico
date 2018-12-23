@@ -1,3 +1,30 @@
+  var Util = {
+    insertParam: function (key, value) {
+      key = encodeURI(key);
+      value = encodeURI(value);
+
+      var kvp = document.location.search.substr(1).split('&');
+
+      var i = kvp.length;
+      var x;
+      while (i--) {
+        x = kvp[i].split('=');
+
+        if (x[0] == key) {
+          x[1] = value;
+          kvp[i] = x.join('=');
+          break;
+        }
+      }
+
+      if (i < 0) {
+        kvp[kvp.length] = [key, value].join('=');
+      }
+
+      //this will reload the page, it's likely better to store this until finished
+      document.location.search = kvp.join('&');
+    }
+  };
   var DAO = {
     getObject: function (find, mensaje, localStorage, localStorageKeyName) {
       var list = [],
@@ -50,24 +77,47 @@
       localStorage.setItem(localStorageKeyName, JSON.stringify(users))
     },
     isLogged: function (localStorage) {
-      var list = [],
-        list = this.getAll(localStorage, "user_data"),
-        bools = list.length == 0;
-      if (!list || bools) {
-        $(location).attr('href', '/login.html ');
-      }
+
 
     },
     logOut: function (localStorage) {
-      localStorage.setItem("user_data", "");
-      $(location).attr('href', '/login.html ');
+
     }
-  }
+  };
+
   $(document).ready(function () {
-    $('#cursos_page').load('./pages/cursos.html')
-    $('#estudiantes_page').load('./pages/estudiantes.html')
-    $('#docentes_page').load('./pages/docentes.html')
+    $('#cursos_page_link').on('click', function () {
+      localStorage.setItem('current_page', 'cursos_page');
+    });
+
+    $('#estudaintes_page_link').on('click', function () {
+      localStorage.setItem('current_page', 'estudiante_page');
+    });
+    $('#docentes_page').on('click', function () {
+      localStorage.setItem('current_page', 'docente_page');
+    });
+    var current_page = localStorage.getItem('current_page');
+    if (current_page !== null && current_page.trim().lentgth !== 0 && current_page !== "") {
+      switch (current_page) {
+        case 'cursos_page':
+          {
+            $('#cursos_page_link').click();
+            break;
+          }
+        case 'estudiante_page':
+          {
+            $('#estudaintes_page_link').click();
+            break;
+          }
+        case 'docente_page':
+          {
+            $('#docentes_page_link').click();
+            break;
+          }
+      }
+    }
     $('#cerrar_sesion').on('click', function () {
-      DAO.logOut(localStorage);
+      var locationstring = window.location.href.toString();
+      $(location).attr('href', locationstring.split("?")[0] + '?logout');
     });
   });
