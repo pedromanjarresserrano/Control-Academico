@@ -15,9 +15,9 @@ if (isset($_POST['saveestu'])) {
 	$estudiante_apellidos = $_POST['estudiante_apellidos'];
 	$estudiante_genero = $_POST['estudiante_genero'];
 
-	$record = mysqli_query($db, "SELECT * FROM estudiante WHERE identificacion=$estudiante_id");
+	$record = mysqli_query($db, "SELECT * FROM estudiante WHERE identificacion ='$estudiante_id' ");
 	$n = mysqli_fetch_assoc($record);
-	$aux_id = $n['identificacion'];
+	$aux_estudiante_id = $n['identificacion'];
 	if (isset($aux_estudiante_id) && $aux_estudiante_id != '') {
 		mysqli_query($db, "UPDATE estudiante SET nombres='$estudiante_nombres', apellidos='$estudiante_apellidos', genero='$estudiante_genero' WHERE identificacion='$estudiante_id' ");
 	} else {
@@ -48,8 +48,8 @@ if (isset($_POST['delestu'])) {
 
 }
 if (isset($_GET['getestu'])) {
-	$id = intval($_GET['getestu']);
-	$record = mysqli_query($db, "SELECT * FROM estudiante WHERE identificacion=$id");
+	$id = $_GET['getestu'];
+	$record = mysqli_query($db, "SELECT * FROM estudiante WHERE identificacion = '$id' ");
 	if (count($record) == 1) {
 		$n = mysqli_fetch_assoc($record);
 		$estudiante_id = $n['identificacion'];
@@ -85,7 +85,6 @@ if (isset($_GET['getallestu'])) {
 	echo json_encode($json);
 }
 
-$results_estudiantes = mysqli_query($db, "SELECT * FROM estudiante");
 ?>
 
 

@@ -3,6 +3,7 @@ include('./php/session.php');
 include('./php/mysql.php');
 global $db;
 include('./php/curso.php');
+
 if (isset($_GET['getestudiantes'])) {
     $id = intval($_GET['getestudiantes']);
     $record = mysqli_query($db, "SELECT * FROM curso inner join estudiante_curso on curso.id = estudiante_curso.id_curso inner join estudiante on estudiante.id = estudiante_curso.id_estudiante where curso.codigo=$id");
@@ -18,7 +19,6 @@ if (isset($_GET['getestudiantes'])) {
             </script>";
     }
 }
-
 
 ?>
 <!DOCTYPE html>

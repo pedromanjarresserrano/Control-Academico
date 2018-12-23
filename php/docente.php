@@ -49,8 +49,8 @@ if (isset($_POST['deldoc'])) {
 
 }
 if (isset($_GET['getdoc'])) {
-    $id = intval($_GET['getdoc']);
-    $record = mysqli_query($db, "SELECT * FROM docente WHERE identificacion=$id");
+    $id = $_GET['getdoc'];
+    $record = mysqli_query($db, "SELECT * FROM docente WHERE identificacion = '$id' ");
     if (count($record) == 1) {
         $n = mysqli_fetch_assoc($record);
         $docente_id = $n['identificacion'];
@@ -64,7 +64,6 @@ if (isset($_GET['getdoc'])) {
     }
 }
 
-$results_docentes = mysqli_query($db, "SELECT * FROM docente");
 ?>
 
 
